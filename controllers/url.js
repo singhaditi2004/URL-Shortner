@@ -1,8 +1,8 @@
-const { nanoid } = require("nanoid");
+const shortid = require("shortid");
 const URL = require("../models/url");
 
 async function handlegenerateNewShortUrl(req, res) {
-  const shortId = nanoid(5);
+  const shortId = shortid(5);
   const body = req.body;
 
   if (!body.url) {

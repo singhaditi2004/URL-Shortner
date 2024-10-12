@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "author": "Aditi Singh Bais",
   "license": "ISC",
@@ -13,6 +14,8 @@
     "mongoose": "^8.7.1",
     "mysql2": "^3.11.3",
     "nanoid": "^5.0.7",
-    "sequelize": "^6.37.4"
+    "nodemon": "^3.1.7",
+    "sequelize": "^6.37.4",
+    "shortid": "^2.2.16"
   }
 }
