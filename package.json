@@ -10,12 +10,15 @@
   "license": "ISC",
   "description": "A URL shortner web app",
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "express": "^4.21.1",
     "mongoose": "^8.7.1",
     "mysql2": "^3.11.3",
     "nanoid": "^5.0.7",
     "nodemon": "^3.1.7",
     "sequelize": "^6.37.4",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "tailwind": "^4.0.0",
+    "url-shortner": "file:"
   }
 }
