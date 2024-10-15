@@ -8,7 +8,7 @@ const URL = require("./models/url");
 // Define the port (either from environment variable or default to 8080)
 const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
 
-app.use(express.static(path.join(__dirname, "Public")));
+app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
 connectToMySQL();
