@@ -8,26 +8,41 @@ async function handlegenerateNewShortUrl(req, res) {
     return res.status(400).json({ message: "URL is required" });
   }
 
+  // Validate URL format (you can extend or modify the regex as needed)
+  const validUrlRegex = /^(http|https):\/\/[^ "]+$/;
+  if (!validUrlRegex.test(body.url)) {
+    return res.status(400).json({ message: "Invalid URL format" });
+  }
+
   try {
     // Check if the URL already exists
     let urlEntry = await URL.findOne({ where: { redirectURL: body.url } });
 
     if (urlEntry) {
-      // If the URL exists, return the existing shortId
-      return res.json({ id: urlEntry.shortId });
+      return res.json({
+        shortUrl: `${req.protocol}://${req.get("host")}/${urlEntry.shortId}`,
+      });
     }
 
     // Generate a new short ID if URL doesn't exist
-    const shortId = shortid.generate(); // Generating a new unique shortId
+    let shortId = shortid.generate();
+    let urlEntryWithShortId = await URL.findOne({ where: { shortId } });
 
-    // Create the entry in MySQL
+    // Ensure the shortId is unique (in rare cases where `shortid` might generate duplicates)
+    while (urlEntryWithShortId) {
+      shortId = shortid.generate();
+      urlEntryWithShortId = await URL.findOne({ where: { shortId } });
+    }
+
     const newUrl = await URL.create({
       shortId: shortId,
       redirectURL: body.url,
-      visitHistory: JSON.stringify([]), // Initialize visit history as an empty array
+      visitHistory: JSON.stringify([]),
     });
 
-    return res.json({ id: newUrl.shortId });
+    return res.json({
+      shortUrl: `${req.protocol}://${req.get("host")}/${newUrl.shortId}`,
+    });
   } catch (error) {
     console.error("Database error", error);
     return res.status(500).json({ message: "Database error", error });

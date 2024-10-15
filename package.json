@@ -20,5 +20,6 @@
     "shortid": "^2.2.16",
     "tailwind": "^4.0.0",
     "url-shortner": "file:"
-  }
+  },
+  "keywords": []
 }

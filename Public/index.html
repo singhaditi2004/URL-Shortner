@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
             min-height: 100vh;
         }
+
         .url-form {
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
@@ -19,28 +21,50 @@
             opacity: 0;
             transform: translateY(20px);
         }
+
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
         }
+
         .floating {
             animation: float 3s ease-in-out infinite;
         }
+
         .pulse {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
+
         .fade-in {
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
     </style>
 </head>
+
 <body class="flex items-center justify-center">
     <div class="container mx-auto px-4">
         <div class="url-form p-8 max-w-md mx-auto">
@@ -58,45 +82,52 @@
             </form>
             <div id="result" class="mt-6 text-center hidden fade-in">
                 <p class="text-lg font-semibold text-gray-800">Your shortened URL:</p>
-                <a id="shortened-url" href="#" target="_blank" class="text-blue-600 hover:underline"></a>
+                <div class="flex items-center justify-center mt-2">
+                    <input type="text" id="shortened-url-display" readonly
+                        class="block w-full rounded-l-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                    <button id="copy-button"
+                        class="py-2 px-4 border border-transparent rounded-r-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Copy
+                    </button>
+                </div>
+                <p id="copy-feedback" class="mt-2 text-sm text-green-600 hidden">Copied to clipboard!</p>
             </div>
         </div>
     </div>
 
     <script>
         // GSAP animation for form entrance
-        gsap.to('.url-form', {duration: 1, opacity: 1, y: 0, ease: 'power3.out'});
+        gsap.to('.url-form', { duration: 1, opacity: 1, y: 0, ease: 'power3.out' });
 
         document.getElementById('url-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const originalUrl = document.getElementById('original-url').value;
-            
+
             try {
-                const response = await fetch('/api/shorten', {
+                const response = await fetch('/url', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ originalUrl }),
+                    body: JSON.stringify({ url: originalUrl }),
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     const resultDiv = document.getElementById('result');
-                    const shortenedUrlLink = document.getElementById('shortened-url');
-                    
-                    shortenedUrlLink.href = data.shortUrl;
-                    shortenedUrlLink.textContent = data.shortUrl;
+                    const shortenedUrlDisplay = document.getElementById('shortened-url-display');
+
+                    shortenedUrlDisplay.value = data.shortUrl;
                     resultDiv.classList.remove('hidden');
-                    
+
                     // Fade in animation for result
-                    gsap.to(resultDiv, {duration: 0.5, opacity: 1, ease: 'power2.inOut'});
-                    
+                    gsap.to(resultDiv, { duration: 0.5, opacity: 1, ease: 'power2.inOut' });
+
                     // Bounce animation for shortened URL
-                    gsap.from(shortenedUrlLink, {duration: 0.5, y: -20, ease: 'bounce.out', delay: 0.5});
+                    gsap.from(shortenedUrlDisplay, { duration: 0.5, y: -20, ease: 'bounce.out', delay: 0.5 });
                 } else {
-                    alert('Error: ' + data);
+                    alert('Error: ' + data.message);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -107,11 +138,31 @@
         // Add hover animation to the submit button
         const submitButton = document.querySelector('button[type="submit"]');
         submitButton.addEventListener('mouseenter', () => {
-            gsap.to(submitButton, {duration: 0.3, scale: 1.05, ease: 'power1.out'});
+            gsap.to(submitButton, { duration: 0.3, scale: 1.05, ease: 'power1.out' });
         });
         submitButton.addEventListener('mouseleave', () => {
-            gsap.to(submitButton, {duration: 0.3, scale: 1, ease: 'power1.out'});
+            gsap.to(submitButton, { duration: 0.3, scale: 1, ease: 'power1.out' });
+        });
+
+        // Copy to clipboard functionality
+        document.getElementById('copy-button').addEventListener('click', () => {
+            const shortenedUrlDisplay = document.getElementById('shortened-url-display');
+            shortenedUrlDisplay.select();
+            document.execCommand('copy');
+
+            const copyFeedback = document.getElementById('copy-feedback');
+            copyFeedback.classList.remove('hidden');
+            gsap.to(copyFeedback, { duration: 0.5, opacity: 1, y: -10, ease: 'power2.out' });
+
+            setTimeout(() => {
+                gsap.to(copyFeedback, {
+                    duration: 0.5, opacity: 0, y: 0, ease: 'power2.in', onComplete: () => {
+                        copyFeedback.classList.add('hidden');
+                    }
+                });
+            }, 2000);
         });
     </script>
 </body>
+
 </html>

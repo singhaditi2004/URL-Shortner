@@ -1,11 +1,14 @@
-// File: app.js
 const express = require("express");
-const { sequelize, connectToMySQL } = require("./connect"); // Import from connect.js
+const { sequelize, connectToMySQL } = require("./connect");
 const urlRoute = require("./routes/url");
 const app = express();
-const PORT = 8080;
+const path = require("path");
 const URL = require("./models/url");
 
+// Define the port (either from environment variable or default to 8080)
+const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
+
+app.use(express.static(path.join(__dirname, "Public")));
 app.use(express.json());
 
 connectToMySQL();
@@ -18,36 +21,23 @@ sequelize.sync({ force: false }).then(() => {
 // Use the route to handle URL shortening requests
 app.use("/url", urlRoute);
 
-// Redirect route and update visit history
+// Handle redirect for shortened URL
 app.get("/:shortId", async (req, res) => {
-  const shortId = req.params.shortId;
+  const { shortId } = req.params;
 
   try {
-    const entry = await URL.findOne({
-      where: { shortId: shortId },
-    });
+    // Look for the shortened URL in the database
+    const urlEntry = await URL.findOne({ where: { shortId } });
 
-    if (!entry) {
-      return res.status(404).send("URL not found");
+    if (!urlEntry) {
+      return res.status(404).json({ message: "URL not found" });
     }
 
-    // Parse the visitHistory array from JSON
-    let visitHistory = JSON.parse(entry.visitHistory);
-
-    // Add the current timestamp to the visitHistory
-    visitHistory.push(new Date());
-
-    // Update visit history in the database
-    entry.visitHistory = JSON.stringify(visitHistory);
-    await entry.save(); // Save the updated entry
-
     // Redirect to the original URL
-    res.redirect(entry.redirectURL); // Use `redirectURL`, assuming it's your correct field
-    console.log("Short ID:", shortId);
-    console.log("Redirecting to:", entry.redirectURL);
+    return res.redirect(urlEntry.redirectURL);
   } catch (error) {
-    console.error("Error while redirecting:", error);
-    res.status(500).send("Internal Server Error");
+    console.error("Error redirecting:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
