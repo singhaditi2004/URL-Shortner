@@ -4,7 +4,7 @@ const urlRoute = require("./routes/url");
 const app = express();
 const path = require("path");
 const URL = require("./models/url");
-
+require("dotenv").config();
 // Define the port (either from environment variable or default to 8080)
 const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
 

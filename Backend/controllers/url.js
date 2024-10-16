@@ -19,8 +19,10 @@ async function handlegenerateNewShortUrl(req, res) {
     let urlEntry = await URL.findOne({ where: { redirectURL: body.url } });
 
     if (urlEntry) {
+      const baseUrl =
+        process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
       return res.json({
-        shortUrl: `${req.protocol}://${req.get("host")}/${urlEntry.shortId}`,
+        shortUrl: `${baseUrl}/${urlEntry.shortId}`,
       });
     }
 
