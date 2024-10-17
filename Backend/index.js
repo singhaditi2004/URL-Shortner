@@ -10,7 +10,10 @@ const PORT = process.env.PORT || 8080; // Using environment variable if set, els
 
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
+const cors = require("cors");
 
+// Enable CORS for all origins (you can specify specific origins for more security)
+app.use(cors());
 connectToMySQL();
 
 // Sync the models (if you want to create tables based on your models)
