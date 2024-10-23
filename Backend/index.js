@@ -15,7 +15,7 @@ app.use(express.json());
 // Enable CORS for all origins (you can specify specific origins for more security)
 app.use(
   cors({
-    origin: ["https://url-shortner-frontend-umber-three.vercel.app/"],
+    origin: "https://url-shortner-frontend-umber-three.vercel.app", // Allow only this origin
     methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -32,7 +32,7 @@ sequelize.sync({ force: false }).then(() => {
 });
 
 // Use the route to handle URL shortening requests
-app.use("/url", urlRoute);
+app.use("/", urlRoute);
 
 // Handle redirect for shortened URL
 app.get("/:shortId", async (req, res) => {
