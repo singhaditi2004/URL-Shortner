@@ -16,12 +16,12 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["https://url-shortner-frontend-umber-three.vercel.app"],
-    methods: ["POST", "GET"],
+    methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
-
+app.options("*", cors());
 // Parse JSON body
 app.use(express.json());
 connectToMySQL();
