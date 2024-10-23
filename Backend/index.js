@@ -17,7 +17,8 @@ app.use(
   cors({
     origin: ["https://url-shortner-frontend-umber-three.vercel.app"],
     methods: ["POST", "GET"],
-    credentials: true, // Change this to match your frontend URL in production
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
