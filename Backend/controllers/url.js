@@ -1,55 +1,98 @@
 const shortid = require("shortid");
 const URL = require("../models/url");
 
-
 async function handlegenerateNewShortUrl(req, res) {
-  const body = req.body;
+    const body = req.body;
 
-  if (!body.url) {
-    return res.status(400).json({ message: "URL is required" });
-  }
-
-  // Validate URL format (you can extend or modify the regex as needed)
-  const validUrlRegex = /^(http|https):\/\/[^ "]+$/;
-  if (!validUrlRegex.test(body.url)) {
-    return res.status(400).json({ message: "Invalid URL format" });
-  }
-
-  try {
-    // Check if the URL already exists
-    let urlEntry = await URL.findOne({ where: { redirectURL: body.url } });
-
-    if (urlEntry) {
-      const baseUrl =
-        process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
-      return res.json({
-        shortUrl: `${baseUrl}/${urlEntry.shortId}`,
-      });
+    // Input validation
+    if (!body.url) {
+        return res.status(400).json({
+            success: false,
+            message: "URL is required"
+        });
     }
 
-    // Generate a new short ID if URL doesn't exist
-    let shortId = shortid.generate();
-    let urlEntryWithShortId = await URL.findOne({ where: { shortId } });
+    // Enhanced URL validation regex
+    const validUrlRegex = /^(https?:\/\/)([\da-z.-]+)\.([a-z.]{2,6})[\/\w .-]*\/?$/;
+    
+    try {
+        // Clean the URL by trimming whitespace
+        const cleanUrl = body.url.trim();
 
-    // Ensure the shortId is unique (in rare cases where `shortid` might generate duplicates)
-    while (urlEntryWithShortId) {
-      shortId = shortid.generate();
-      urlEntryWithShortId = await URL.findOne({ where: { shortId } });
+        // Validate URL format
+        if (!validUrlRegex.test(cleanUrl)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid URL format. Please provide a valid HTTP or HTTPS URL"
+            });
+        }
+
+        // Check if URL already exists
+        const existingUrl = await URL.findOne({
+            where: { redirectURL: cleanUrl }
+        });
+
+        if (existingUrl) {
+            // Construct the short URL based on environment
+            const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
+            return res.json({
+                success: true,
+                shortId: existingUrl.shortId,
+                shortUrl: `${baseUrl}/${existingUrl.shortId}`,
+                message: "Existing short URL returned"
+            });
+        }
+
+        // Generate new short ID with collision handling
+        let shortId;
+        let urlEntryWithShortId;
+        let attempts = 0;
+        const MAX_ATTEMPTS = 5;
+
+        do {
+            shortId = shortid.generate();
+            urlEntryWithShortId = await URL.findOne({ where: { shortId } });
+            attempts++;
+
+            if (attempts >= MAX_ATTEMPTS) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Unable to generate unique short ID. Please try again."
+                });
+            }
+        } while (urlEntryWithShortId);
+
+        // Create new URL entry
+        const newUrl = await URL.create({
+            shortId,
+            redirectURL: cleanUrl,
+            visitHistory: JSON.stringify([]),
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+
+        // Construct response URL
+        const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
+        const shortUrl = `${baseUrl}/${shortId}`;
+
+        return res.status(201).json({
+            success: true,
+            shortId: shortId,
+            shortUrl: shortUrl,
+            message: "Short URL created successfully"
+        });
+
+    } catch (error) {
+        console.error("URL generation error:", error);
+        
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while generating the short URL",
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
-
-    const newUrl = await URL.create({
-      shortId: shortId,
-      redirectURL: body.url,
-      visitHistory: JSON.stringify([]),
-    });
-
-    return res.json({
-      shortUrl: `${req.protocol}://${req.get("host")}/${newUrl.shortId}`,
-    });
-  } catch (error) {
-    console.error("Database error", error);
-    return res.status(500).json({ message: "Database error", error });
-  }
 }
 
-module.exports = { handlegenerateNewShortUrl };
+module.exports = {
+    handlegenerateNewShortUrl
+};

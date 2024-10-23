@@ -12,13 +12,15 @@ const PORT = process.env.PORT || 8080; // Using environment variable if set, els
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
-// Enable CORS for all origins (you can specify specific origins for more security)
 app.use(
   cors({
-    origin: "https://url-shortner-frontend-umber-three.vercel.app", // Allow only this origin
-    methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
+    origin: [
+      "https://url-shortner-frontend-umber-three.vercel.app",
+      "http://localhost:8080", // For local development
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+    credentials: false, // Set to true if you need to send cookies
   })
 );
 app.options("*", cors());
@@ -32,7 +34,7 @@ sequelize.sync({ force: false }).then(() => {
 });
 
 // Use the route to handle URL shortening requests
-app.use("/", urlRoute);
+app.use("/url", urlRoute);
 
 // Handle redirect for shortened URL
 app.get("/:shortId", async (req, res) => {

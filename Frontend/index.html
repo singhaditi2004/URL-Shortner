@@ -97,6 +97,7 @@
 
     <script>
         // GSAP animation for form entrance
+        const API_BASE_URL = 'https://url-shortner-gevs-api.vercel.app';
         gsap.to('.url-form', { duration: 1, opacity: 1, y: 0, ease: 'power3.out' });
 
         document.getElementById('url-form').addEventListener('submit', async (e) => {
@@ -104,7 +105,7 @@
             const originalUrl = document.getElementById('original-url').value;
 
             try {
-                const response = await fetch(`https://url-shortner-gevs-api.vercel.app`, {
+                const response = await fetch(`${API_BASE_URL}/url`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -117,8 +118,8 @@
                 if (response.ok) {
                     const resultDiv = document.getElementById('result');
                     const shortenedUrlDisplay = document.getElementById('shortened-url-display');
-
-                    shortenedUrlDisplay.value = data.shortUrl;
+                    shortenedUrlDisplay.value = `${API_BASE_URL}/${data.shortId}`;
+                    //shortenedUrlDisplay.value = data.shortUrl;
                     resultDiv.classList.remove('hidden');
 
                     // Fade in animation for result
@@ -144,24 +145,37 @@
             gsap.to(submitButton, { duration: 0.3, scale: 1, ease: 'power1.out' });
         });
 
-        // Copy to clipboard functionality
-        document.getElementById('copy-button').addEventListener('click', () => {
+        // Enhanced copy to clipboard functionality
+        document.getElementById('copy-button').addEventListener('click', async () => {
             const shortenedUrlDisplay = document.getElementById('shortened-url-display');
-            shortenedUrlDisplay.select();
-            document.execCommand('copy');
-
+            const copyButton = document.getElementById('copy-button');
             const copyFeedback = document.getElementById('copy-feedback');
-            copyFeedback.classList.remove('hidden');
-            gsap.to(copyFeedback, { duration: 0.5, opacity: 1, y: -10, ease: 'power2.out' });
 
-            setTimeout(() => {
-                gsap.to(copyFeedback, {
-                    duration: 0.5, opacity: 0, y: 0, ease: 'power2.in', onComplete: () => {
-                        copyFeedback.classList.add('hidden');
-                    }
-                });
-            }, 2000);
+            try {
+                await navigator.clipboard.writeText(shortenedUrlDisplay.value);
+
+                // Visual feedback
+                copyButton.textContent = 'Copied!';
+                copyFeedback.classList.remove('hidden');
+                gsap.to(copyFeedback, { duration: 0.5, opacity: 1, y: -10, ease: 'power2.out' });
+
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                    gsap.to(copyFeedback, {
+                        duration: 0.5,
+                        opacity: 0,
+                        y: 0,
+                        ease: 'power2.in',
+                        onComplete: () => {
+                            copyFeedback.classList.add('hidden');
+                        }
+                    });
+                }, 2000);
+            } catch (err) {
+                alert('Failed to copy to clipboard');
+            }
         });
+
     </script>
 </body>
 
