@@ -18,9 +18,12 @@ app.use(
       "https://url-shortner-frontend-umber-three.vercel.app",
       "http://localhost:8080", // For local development
     ],
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
-    credentials: false, // Set to true if you need to send cookies
+    allowedHeaders: ["Content-Type", "Authorization", "Origin", "Accept"],
+    exposedHeaders: ["Content-Range", "X-Content-Range"],
+    credentials: true,
+    maxAge: 86400, // 24 hours
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 );
 app.options("*", cors());
