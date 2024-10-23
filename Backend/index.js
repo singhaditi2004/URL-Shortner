@@ -15,7 +15,7 @@ app.use(express.json());
 // Enable CORS for all origins (you can specify specific origins for more security)
 app.use(
   cors({
-    origin: ["https://url-shortner-frontend-umber-three.vercel.app"],
+    origin: ["https://url-shortner-frontend-umber-three.vercel.app/"],
     methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
