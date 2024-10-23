@@ -1,19 +1,28 @@
 const express = require("express");
-const { sequelize, connectToMySQL } = require("./Backend/connect");
-const urlRoute = require("./Backend/routes/url");
+const { sequelize, connectToMySQL } = require("./connect");
+const urlRoute = require("./routes/url");
 const app = express();
 const path = require("path");
-const URL = require("./Backend/models/url");
+const URL = require("./models/url");
+const cors = require("cors");
 require("dotenv").config();
 // Define the port (either from environment variable or default to 8080)
 const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
 
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
-const cors = require("cors");
 
 // Enable CORS for all origins (you can specify specific origins for more security)
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:8080/"],
+    methods: ["POST", "GET"],
+    credentials: true, // Change this to match your frontend URL in production
+  })
+);
+
+// Parse JSON body
+app.use(express.json());
 connectToMySQL();
 
 // Sync the models (if you want to create tables based on your models)

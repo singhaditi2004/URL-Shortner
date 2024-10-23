@@ -1,6 +1,7 @@
 const shortid = require("shortid");
 const URL = require("../models/url");
 
+
 async function handlegenerateNewShortUrl(req, res) {
   const body = req.body;
 
