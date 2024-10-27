@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const { sequelize, connectToMySQL } = require("./connect");
 const urlRoute = require("./routes/url");
 const app = express();
@@ -8,25 +9,19 @@ const URL = require("./models/url");
 require("dotenv").config();
 // Define the port (either from environment variable or default to 8080)
 const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
-
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Allows requests from any origin
-  res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE"); // Allows specified HTTP methods
-  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Allows specified headers
+const corsOptions = {
+  origin: 'https://url-shortner-frontend-umber-three.vercel.app', // Allow only your frontend
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+};
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200); // Quickly respond to preflight OPTIONS requests
-  }
-
-  next();
-});
-
+app.use(cors(corsOptions)); 
 //app.options("*", cors());
 // Parse JSON body
-app.use(express.json());
+
 connectToMySQL();
 
 // Sync the models (if you want to create tables based on your models)
