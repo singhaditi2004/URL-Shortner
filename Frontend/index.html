@@ -105,7 +105,7 @@
             const originalUrl = document.getElementById('original-url').value;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/url`, {
+                const response = await fetch(`${API_BASE_URL}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
