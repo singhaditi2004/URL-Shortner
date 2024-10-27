@@ -31,7 +31,7 @@ sequelize.sync({ force: false }).then(() => {
 });
 
 // Use the route to handle URL shortening requests
-app.use("/url", urlRoute);
+app.use("/", urlRoute);
 
 // Handle redirect for shortened URL
 app.get("/:shortId", async (req, res) => {
