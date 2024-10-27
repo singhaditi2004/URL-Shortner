@@ -4,7 +4,7 @@ const urlRoute = require("./routes/url");
 const app = express();
 const path = require("path");
 const URL = require("./models/url");
-const cors = require("cors");
+//const cors = require("cors");
 require("dotenv").config();
 // Define the port (either from environment variable or default to 8080)
 const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
@@ -12,15 +12,15 @@ const PORT = process.env.PORT || 8080; // Using environment variable if set, els
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
-app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allows any origin
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allows specified methods
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allows specific headers
-    res.setHeader('Access-Control-Allow-Credentials', true); // Allows credentials if needed
-    next();
-});
+const cors = require("cors");
+app.use(cors({
+  origin: "https://url-shortner-frontend-umber-three.vercel.app", // Specify your frontend origin here
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true,
+}));
 
-app.options("*", cors());
+//app.options("*", cors());
 // Parse JSON body
 app.use(express.json());
 connectToMySQL();
