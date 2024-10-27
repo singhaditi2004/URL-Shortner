@@ -12,11 +12,18 @@ const PORT = process.env.PORT || 8080; // Using environment variable if set, els
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allows requests from any origin
+  res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE"); // Allows specified HTTP methods
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization"); // Allows specified headers
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200); // Quickly respond to preflight OPTIONS requests
+  }
+
   next();
-})
+});
+
 //app.options("*", cors());
 // Parse JSON body
 app.use(express.json());
