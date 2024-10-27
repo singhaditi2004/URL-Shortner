@@ -11,14 +11,13 @@ require("dotenv").config();
 const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
+app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); // Allow all origins
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
-const corsOptions = {
-  origin: 'https://url-shortner-frontend-umber-three.vercel.app', // Allow only your frontend
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-};
-
-app.use(cors(corsOptions)); 
 //app.options("*", cors());
 // Parse JSON body
 
