@@ -12,13 +12,11 @@ const PORT = process.env.PORT || 8080; // Using environment variable if set, els
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
-//const cors = require("cors");
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-});
-//app.use(cors(corsOpts));
-
+})
 //app.options("*", cors());
 // Parse JSON body
 app.use(express.json());
