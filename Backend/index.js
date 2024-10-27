@@ -12,20 +12,14 @@ const PORT = process.env.PORT || 8080; // Using environment variable if set, els
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: [
-      "https://url-shortner-frontend-umber-three.vercel.app",
-      "http://localhost:8080", // For local development
-    ],
-    allowedHeaders: ["Content-Type", "Authorization", "Origin", "Accept"],
-    exposedHeaders: ["Content-Range", "X-Content-Range"],
-    credentials: true,
-    maxAge: 86400, // 24 hours
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  })
-);
+app.use(function(req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Allows any origin
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allows specified methods
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allows specific headers
+    res.setHeader('Access-Control-Allow-Credentials', true); // Allows credentials if needed
+    next();
+});
+
 app.options("*", cors());
 // Parse JSON body
 app.use(express.json());
