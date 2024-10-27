@@ -13,12 +13,13 @@ app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
 const cors = require("cors");
-app.use(cors({
-  origin: "https://url-shortner-frontend-umber-three.vercel.app", // Specify your frontend origin here
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type"],
-  credentials: true,
-}));
+const corsOpts = {
+  origin: "*", // Allows any origin; can be restricted to specific domains
+  methods: ["GET", "POST"], // Specify allowed methods
+  allowedHeaders: ["Content-Type"], // Specify allowed headers
+};
+
+app.use(cors(corsOpts));
 
 //app.options("*", cors());
 // Parse JSON body
