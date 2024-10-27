@@ -13,14 +13,11 @@ app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
 
 const cors = require("cors");
-const corsOpts = {
-  origin: "*", // Allows any origin; can be restricted to specific domains
-  methods: ["GET", "POST"], // Specify allowed methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
-  credentials: true, 
-};
-
-app.use(cors(corsOpts));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+//app.use(cors(corsOpts));
 
 //app.options("*", cors());
 // Parse JSON body
