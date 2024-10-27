@@ -16,7 +16,8 @@ const cors = require("cors");
 const corsOpts = {
   origin: "*", // Allows any origin; can be restricted to specific domains
   methods: ["GET", "POST"], // Specify allowed methods
-  allowedHeaders: ["Content-Type"], // Specify allowed headers
+  allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+  credentials: true, 
 };
 
 app.use(cors(corsOpts));
