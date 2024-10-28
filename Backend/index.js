@@ -9,7 +9,7 @@ const URL = require("./models/url");
 require("dotenv").config();
 app.use(
   cors({
-    origin: "https://url-shortner-frontend-umber-three.vercel.app/",
+    origin: "*",
   })
 );
 // Define the port (either from environment variable or default to 8080)

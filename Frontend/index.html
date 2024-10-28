@@ -97,7 +97,7 @@
 
     <script>
         // GSAP animation for form entrance
-        const API_BASE_URL = 'https://url-shortner-gevs-api.vercel.app';
+        const API_BASE_URL = 'https://url-shortner-gevs-api.vercel.app/';
         gsap.to('.url-form', { duration: 1, opacity: 1, y: 0, ease: 'power3.out' });
 
         document.getElementById('url-form').addEventListener('submit', async (e) => {
@@ -111,7 +111,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ url: originalUrl }),
-                   
+
                 });
 
                 const data = await response.json();
