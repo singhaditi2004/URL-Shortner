@@ -7,16 +7,17 @@ const path = require("path");
 const URL = require("./models/url");
 //const cors = require("cors");
 require("dotenv").config();
+const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
+app.use(express.static(path.join(__dirname, "Frontend")));
+app.use(express.json());
 app.use(
   cors({
     origin: "https://url-shortner-frontend-umber-three.vercel.app",
   })
 );
-
+app.options('*', cors());
 // Define the port (either from environment variable or default to 8080)
-const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
-app.use(express.static(path.join(__dirname, "Frontend")));
-app.use(express.json());
+
 
 /*app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*"); // Allow all origins
