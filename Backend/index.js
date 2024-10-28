@@ -16,6 +16,11 @@ app.use(
   })
 );
 app.options('*', cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Define the port (either from environment variable or default to 8080)
 
 
