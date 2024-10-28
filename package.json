@@ -20,8 +20,7 @@
     "nodemon": "^3.1.7",
     "sequelize": "^6.37.4",
     "shortid": "^2.2.16",
-    "tailwind": "^4.0.0",
-    "url-shortner": "file:"
+    "tailwind": "^4.0.0"
   },
   "keywords": []
 }
