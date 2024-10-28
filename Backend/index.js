@@ -7,17 +7,25 @@ const path = require("path");
 const URL = require("./models/url");
 //const cors = require("cors");
 require("dotenv").config();
+app.use(
+  cors({
+    origin: "https://url-shortner-frontend-umber-three.vercel.app/",
+  })
+);
 // Define the port (either from environment variable or default to 8080)
 const PORT = process.env.PORT || 8080; // Using environment variable if set, else default to 8080
 app.use(express.static(path.join(__dirname, "Frontend")));
 app.use(express.json());
-app.use(cors());
-app.use((req, res, next) => {
+
+/*app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*"); // Allow all origins
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
-
+*/
 //app.options("*", cors());
 // Parse JSON body
 
